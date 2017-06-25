@@ -7,7 +7,8 @@ var server = http.createServer(function (req, res){
     res.end();
 })
 
-server.listen(8080);
+server.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+//server.listen(8080);
 
 wsServer = new WebSocket({httpServer: server});
 
