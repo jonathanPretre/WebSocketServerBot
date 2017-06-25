@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>WebSocket Chat</title>
+    <script type="text/javascript" src="Scripts/jquery-2.0.2.js"></script>
+    <script type="text/javascript">    
+        var ws;
+        $().ready(function () {
+            $("#btnConnect").click(function () {
+                $("#spanStatus").text("connecting");
+                ws = new WebSocket('ws://localhost:8080', 'echo-protocol');
+                ws.onopen = function () {
+                    $("#spanStatus").text("connected");
+                };
+                ws.onmessage = function (msg) {
+                    var resp = JSON.parse(msg.data);
+                    //$("#spanStatus").text(resp.text);
+                    $("#spanStatus").text(resp.text);
+                };
+                ws.onerror = function (evt) {
+                    $("#spanStatus").text(evt.message);
+                };
+                ws.onclose = function () {
+                    $("#spanStatus").text("disconnected");
+                };
+            });
+            $("#btnSend").click(function () {
+                if (ws.readyState == WebSocket.OPEN) {
+                    
+                    var msg = {
+                        "text" : "bonjour"
+                    };
+                    
+                    msg.text = $("#textInput").val();
+
+                    ws.send(JSON.stringify(msg));
+                    $("#textInput").val("");
+                }
+                else {
+                    $("#spanStatus").text("Connection is closed");
+                }
+            });
+            $("#btnDisconnect").click(function () {
+                ws.close();
+            });
+        });
+    </script>
+</head>
+<body>
+    <input type="button" value="Connect" id="btnConnect" />
+    <input type="button" value="Disconnect" id="btnDisconnect" /><br />
+    <input type="text" id="textInput" />
+    <input type="button" value="Send" id="btnSend" /><br />
+    <span id="spanStatus">(display)</span>
+</body>
+</html>
