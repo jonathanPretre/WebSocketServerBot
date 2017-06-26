@@ -7,6 +7,8 @@ var server = http.createServer(function (req, res){
     res.end();
 })
 
+const PORT = process.env.PORT || 3000;
+
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 //server.listen(8080);
 
