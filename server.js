@@ -1,45 +1,28 @@
-var WebSocket = require('websocket').server;
+var WebSocket = require('ws').Server;
 var http = require('http');
 
-var server = http.createServer(function (req, res){
-    //console.log((new Date()) + ' Received request for ' + req.url);
-    res.writeHead(404);
-    res.end();
-})
+const PORT = process.env.PORT || 9030;
 
-const PORT = process.env.PORT || 3000;
+wsServer = new WebSocket({port: PORT});
 
-server.listen(PORT, () => console.log(`Listening on ${ PORT }`))
-//server.listen(8080);
-
-wsServer = new WebSocket({httpServer: server});
-
-function originIsAllowed(origin) {
-  // put logic here to detect whether the specified origin is allowed. 
-  return true;
-}
-
-wsServer.on('request', function(request) {
-     
-    var connection = request.accept('echo-protocol', request.origin);
+wsServer.on('connection', function(ws) {
     
     console.log((new Date()) + ' Connection accepted.');
     
-    connection.on('message', function(message) {
-        var jsonReceive = JSON.parse(message.utf8Data);
+    ws.on('message', function(message) {
+        var jsonReceive = JSON.parse(message);
         if (jsonReceive.text != "") 
         {        
             console.log('Received Message: ' + jsonReceive.text);
             
             var jsonstring = {"text":"","type":"bot","success":true};
             
-            //jsonstring.message = AnalystMessage(jsonstring);
             var json = JSON.stringify(AnalystMessage(jsonReceive.text));
-            connection.send(json);
+            ws.send(json);
         }
     });
     
-    connection.on('close', function(reasonCode, description) {
+    ws.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
     });
 });
