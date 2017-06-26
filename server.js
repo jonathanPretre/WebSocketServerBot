@@ -23,7 +23,7 @@ wsServer.on('connection', function(ws) {
     });
     
     ws.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+        console.log((new Date()) + ' Peer ' + ws.remoteAddress + ' disconnected.');
     });
 });
 

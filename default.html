@@ -9,8 +9,8 @@
         $().ready(function () {
             $("#btnConnect").click(function () {
                 $("#spanStatus").text("connecting");
-                ws = new WebSocket('ws://localhost:9030');
-                //ws = new WebSocket('ws://floating-thicket-85934.herokuapp.com', 'echo-protocol');
+                //ws = new WebSocket('ws://localhost:9030');
+                ws = new WebSocket('ws://floating-thicket-85934.herokuapp.com');
                 ws.onopen = function () {
                     $("#spanStatus").text("connected");
                 };
