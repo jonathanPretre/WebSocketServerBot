@@ -3,6 +3,8 @@ var http = require('http');
 
 const PORT = process.env.PORT || 9030;
 
+console.log((new Date()) + ' port :' + PORT);
+
 wsServer = new WebSocket({port: PORT});
 
 wsServer.on('connection', function(ws) {
@@ -15,10 +17,19 @@ wsServer.on('connection', function(ws) {
         {        
             console.log('Received Message: ' + jsonReceive.text);
             
-            var jsonstring = {"text":"","type":"bot","success":true};
+            //var jsonstring = {"text":"","type":"bot","success":true};
+            var json = AnalystMessage(jsonReceive.text);
             
-            var json = JSON.stringify(AnalystMessage(jsonReceive.text));
-            ws.send(json);
+            if(json.type === "message"){
+                ws.clients.forEach(function each(client) {
+                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify(json));
+                    }
+                });
+            }
+            else{
+                ws.send(JSON.stringify(json));
+            }
         }
     });
     

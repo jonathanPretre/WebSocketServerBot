@@ -9,8 +9,8 @@
         $().ready(function () {
             $("#btnConnect").click(function () {
                 $("#spanStatus").text("connecting");
-                //ws = new WebSocket('ws://localhost:9030');
-                ws = new WebSocket('ws://floating-thicket-85934.herokuapp.com');
+                ws = new WebSocket('ws://localhost:9030');
+                //ws = new WebSocket('ws://floating-thicket-85934.herokuapp.com:');
                 ws.onopen = function () {
                     $("#spanStatus").text("connected");
                 };
@@ -26,6 +26,21 @@
                     $("#spanStatus").text("disconnected");
                 };
             });
+                ws = new WebSocket('ws://floating-thicket-85934.herokuapp.com:');
+                ws.onopen = function () {
+                    $("#spanStatus").text("connected");
+                };
+                ws.onmessage = function (msg) {
+                    var resp = JSON.parse(msg.data);
+                    //$("#spanStatus").text(resp.text);
+                    $("#spanStatus").text(resp.text);
+                };
+                ws.onerror = function (evt) {
+                    $("#spanStatus").text(evt.message);
+                };
+                ws.onclose = function () {
+                    $("#spanStatus").text("disconnected");
+                };
             $("#btnSend").click(function () {
                 if (ws.readyState == WebSocket.OPEN) {
                     
