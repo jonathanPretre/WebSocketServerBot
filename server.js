@@ -19,17 +19,25 @@ wsServer.on('connection', function(ws) {
             
             //var jsonstring = {"text":"","type":"bot","success":true};
             var json = AnalystMessage(jsonReceive.text);
+            console.log("success : " + json.success + " text : " + json.text + " type: " + json.type);
             
-            if(json.type === "message"){
-                ws.clients.forEach(function each(client) {
+            //if(json.type === "message"){
+                wsServer.clients.forEach(function each(client) {
                     if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        console.log("Envoie Broadcast : success : " + json.success + " text : " + json.text + " type : " + json.type);
                         client.send(JSON.stringify(json));
                     }
+                    else
+                    {
+                        client.send(JSON.stringify(json));
+                        console.log("Envoie Broadcast avec erreur : success : " + json.success + " text : " + json.text + " type : " + json.type);
+                    }
                 });
-            }
-            else{
-                ws.send(JSON.stringify(json));
-            }
+            //}
+            //else{
+                //console.log("Envoie Single : success : " + json.success + " text : " + json.text + " type : " + json.type);
+                //ws.send(JSON.stringify(json));
+            //}
         }
     });
     
@@ -42,7 +50,7 @@ function AnalystMessage(messageReceive){
     var jsonstring = {"text":"","type":"message","success":true};
     var regex1 = /^bot\s/;
     var regex2 = /^@bot\s/;
-    var regex3 = /^bot:\s/;
+    var regex3 = /^bot:/;
     if(regex1.test(messageReceive) || regex2.test(messageReceive) || regex3.test(messageReceive) )
         {
             if(/ping$/.test(messageReceive))
@@ -54,7 +62,7 @@ function AnalystMessage(messageReceive){
             }
             else
             {
-                jsonstring.text = "Error bot cmd";
+                jsonstring.text = messageReceive;
                 jsonstring.type = "bot";
                 jsonstring.success = true;
                 return jsonstring;
